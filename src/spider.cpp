@@ -12,9 +12,9 @@
 spider_t* spider_create(GLfloat x, GLfloat y) {
 	spider_t* spider = (spider_t*) malloc(sizeof(spider_t));
 	spider->rotationSpeed = 200;
-	spider->translationSpeed = 100;
-	spider->angle = 0;
-	spider->angleThreshold = 3;
+	spider->translationSpeed = 1;
+	spider->angle = -90;
+	spider->angleThreshold = 0.1;
 	spider->distanceThreshold = 3;
 	spider->posX = x;
 	spider->posY = y;
@@ -22,7 +22,7 @@ spider_t* spider_create(GLfloat x, GLfloat y) {
 	spider->targetY = NULL;
 	spider->headRadius = 18.0f;
 	spider->abdomenRadius = 30.0f;
-	spider->definedDirection = false;
+	spider->rotating = false;
 
 	return spider;
 }
@@ -30,7 +30,7 @@ spider_t* spider_create(GLfloat x, GLfloat y) {
 void spider_draw(spider_t* spider) {
 	int num_segments = 100;
 
-	glColor4f(0.35f, 0.15f, 0.15f, 1.0f);
+	glColor4f(0.25f, 0.15f, 0.15f, 1.0f);
 	glPointSize(1.0f);
 
 	glLoadIdentity();
@@ -47,7 +47,7 @@ void spider_draw(spider_t* spider) {
 
 	glLoadIdentity();
 	glTranslatef(spider->posX, spider->posY, 0.0f);
-	glRotatef(-spider->angle, 0.0f, 0.0f, 1.0f);
+	glRotatef(spider->angle, 0.0f, 0.0f, 1.0f);
 	glTranslatef(-spider->posX, -spider->posY, 0.0f);
 
 	glBegin(GL_TRIANGLE_FAN);
@@ -59,40 +59,32 @@ void spider_draw(spider_t* spider) {
 	glEnd();
 }
 
-GLfloat dot_product(GLfloat xa, GLfloat ya, GLfloat xb, GLfloat yb) {
-	return xa * xb + ya * yb;
-}
-
-GLfloat angle_difference(GLfloat xa, GLfloat ya, GLfloat xb, GLfloat yb) {
+bool same_direction(GLfloat threshold, GLfloat xa, GLfloat ya, GLfloat xb, GLfloat yb) {
 	GLfloat magA = sqrt(pow(xa, 2) + pow(ya, 2));
 	GLfloat magB = sqrt(pow(xb, 2) + pow(yb, 2));
 
-	return dot_product(xa, ya, xb, yb) - (magA * magB);
+	xa = xa / magA;
+	ya = ya / magA;
+	xb = xb / magB;
+	yb = yb / magB;
+
+	//std::cout << abs(xa - xb) << ", " << abs(ya - yb) << std::endl;
+	if (abs(xa - xb) <= threshold && abs(ya - yb) <= threshold)
+		return true;
+
+	return false;
 }
 
 void spider_update(spider_t* spider, int delta) {
-	// Primeiro, rotaciona a aranha
 	if (spider_has_target(spider)) {
 		if (spider->rotating) {
+			// Rotate first
 			GLfloat xa = (spider->abdomenRadius + spider->headRadius) * cos(deg_to_rad(spider->angle));
 			GLfloat ya = (spider->abdomenRadius + spider->headRadius) * sin(deg_to_rad(spider->angle));
 			GLfloat xb = spider->targetX - spider->posX;
 			GLfloat yb = spider->targetY - spider->posY;
 
-			GLfloat difference = angle_difference(xa, ya, xb, yb);
-
-			if (spider->definedDirection == false) {
-				spider->definedDirection = true;
-
-				float direction = xb * ya - yb * xa;
-
-				if (direction >= 0)
-					spider->rotateClockwise = false;
-				else
-					spider->rotateClockwise = true;
-			}
-
-			if (abs(difference) >= spider->angleThreshold) {
+			if(!same_direction(spider->angleThreshold, xa, ya, xb, yb)){
 				if (spider->rotateClockwise == true)
 					spider->angle += spider->rotationSpeed * delta / 1000;
 				else
@@ -103,25 +95,23 @@ void spider_update(spider_t* spider, int delta) {
 				if (spider->angle < 0)
 					spider->angle += 360;
 			} else {
-				spider->definedDirection = false;
 				spider->rotating = false;
 			}
 		} else {
-			/*if(spider->targetX > spider->posX)
-				spider->posX += spider->translationSpeed * delta / 1000;
-			else
-				spider->posX -= spider->translationSpeed * delta / 1000;
+			// Move after rotation is done
+			float distanceX = abs(spider->targetX - spider->posX);
+			float distanceY = abs(spider->targetY - spider->posY);
 
-			if (spider->targetY > spider->posY)
-				spider->posY -= spider->translationSpeed * delta / 1000;
-			else
-				spider->posY += spider->translationSpeed * delta / 1000;
+			if (distanceX >= spider->distanceThreshold)
+				spider->posX += distanceX * spider->modifierX * spider->translationSpeed * delta / 1000;
 
-			if (abs(spider->posX - spider->targetX) <= spider->distanceThreshold ||
-				abs(spider->posY - spider->targetY) <= spider->distanceThreshold) {
+			if(distanceY >= spider->distanceThreshold)
+				spider->posY += distanceY * spider->modifierY * spider->translationSpeed * delta / 1000;
+
+			if (distanceX <= spider->distanceThreshold && distanceY <= spider->distanceThreshold) {
 				spider->targetX = NULL;
 				spider->targetY = NULL;
-			}*/
+			}
 		}
 	}
 }
@@ -130,6 +120,17 @@ void spider_set_target(spider_t* spider, GLint x, GLint y) {
 	spider->targetX = x;
 	spider->targetY = y;
 	spider->rotating = true;
+
+	GLfloat xa = (spider->abdomenRadius + spider->headRadius) * cos(deg_to_rad(spider->angle));
+	GLfloat ya = (spider->abdomenRadius + spider->headRadius) * sin(deg_to_rad(spider->angle));
+	GLfloat xb = spider->targetX - spider->posX;
+	GLfloat yb = spider->targetY - spider->posY;
+
+	float direction = xb * ya - yb * xa;
+	(direction >= 0) ? spider->rotateClockwise = false : spider->rotateClockwise = true;
+
+	(spider->targetX > spider->posX) ? spider->modifierX =  1 : spider->modifierX = -1;
+	(spider->targetY > spider->posY) ? spider->modifierY =  1 : spider->modifierY = -1;
 }
 
 bool spider_has_target(spider_t* spider) {

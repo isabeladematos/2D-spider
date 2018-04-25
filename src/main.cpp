@@ -37,9 +37,9 @@ int main(int argc, char* argv[]) {
 
 void init() {
 	spider = spider_create(300, 300);
-	glClearColor(0.0f, 0.6f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.6f, 0.0f, 1.0f);
 	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
+	gluOrtho2D(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 }
 
 void draw() {
