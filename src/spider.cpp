@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <GL/glut.h>
+#include <math.h>
 
 #include "spider.h"
 
