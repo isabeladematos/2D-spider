@@ -6,6 +6,7 @@ typedef struct {
 	GLfloat angle, angleThreshold;
 	GLfloat rotationSpeed, translationSpeed;
 	GLfloat abdomenRadius, headRadius;
+	GLfloat distanceBetweenLegs;
 	int modifierX, modifierY;
 	bool rotateClockwise, rotating;
 } spider_t;

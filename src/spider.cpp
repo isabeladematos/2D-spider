@@ -21,8 +21,9 @@ spider_t* spider_create(GLfloat x, GLfloat y) {
 	spider->posY = y;
 	spider->targetX = NULL;
 	spider->targetY = NULL;
-	spider->headRadius = 18.0f;
+	spider->headRadius = 23.0f;
 	spider->abdomenRadius = 30.0f;
+	spider->distanceBetweenLegs = 5;
 	spider->rotating = false;
 
 	return spider;
@@ -58,6 +59,112 @@ void spider_draw(spider_t* spider) {
 			spider->posY + spider->headRadius * sin(theta));
 	}
 	glEnd();
+
+	glBegin(GL_LINES);
+			//P1
+			//lado direito
+			//primeira perna
+	    glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius - 10 ,
+			spider->posY  );
+	    glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173),
+			spider->posY  + 90 * cos(1.22173));
+
+			glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173),
+		 spider->posY  + 90* cos(1.22173));
+		 glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173) +  35 * sin(0.872665),
+		spider->posY  + 90 * cos(1.22173) + 35 * cos(0.872665));
+
+		//segunda perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius + 10 - spider->distanceBetweenLegs ,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) - spider->distanceBetweenLegs,
+		spider->posY  + 60 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) - spider->distanceBetweenLegs,
+		spider->posY + 60 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) + 40 * sin(5.23599) - spider->distanceBetweenLegs,
+		spider->posY   + 60 * cos(0.349066) + 40 * cos(5.23599));
+
+		//terceira perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius + 10 - 2*spider->distanceBetweenLegs,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) - 2*spider->distanceBetweenLegs,
+		spider->posY   + 50 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) - 2*spider->distanceBetweenLegs,
+		spider->posY   + 50 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) + 50 * sin(5.23599) - 2*spider->distanceBetweenLegs ,
+		spider->posY  + 50 * cos(0.349066) + 50 * cos(5.23599));
+
+		//quarta perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 10 - 3*spider->distanceBetweenLegs,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) - 3*spider->distanceBetweenLegs,
+		spider->posY   + 40 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) - 3*spider->distanceBetweenLegs,
+		spider->posY   + 40 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) + 120 * sin(5.23599) - 3*spider->distanceBetweenLegs ,
+		spider->posY  + 40 * cos(0.349066) + 120 * cos(5.23599));
+
+		//lado esquerda
+		//primeira perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius - 10 ,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173),
+		spider->posY  - 90 * cos(1.22173));
+
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173),
+		spider->posY  - 90* cos(1.22173));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 90 * sin(1.22173) +  35 * sin(0.872665),
+		spider->posY  - 90 * cos(1.22173) - 35 * cos(0.872665));
+
+		//segunda perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius + 10 - spider->distanceBetweenLegs ,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) - spider->distanceBetweenLegs,
+		spider->posY  - 60 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) - spider->distanceBetweenLegs,
+		spider->posY - 60 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 * sin(0.349066) + 40 * sin(5.23599) - spider->distanceBetweenLegs,
+		spider->posY   - 60 * cos(0.349066) - 40 * cos(5.23599));
+
+		//terceira perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius + 10 - 2*spider->distanceBetweenLegs,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) - 2*spider->distanceBetweenLegs,
+		spider->posY   - 50 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) - 2*spider->distanceBetweenLegs,
+		spider->posY   - 50 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 50 * sin(0.349066) + 50 * sin(5.23599) - 2*spider->distanceBetweenLegs ,
+		spider->posY  - 50 * cos(0.349066) - 50 * cos(5.23599));
+
+		//quarta perna
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 10 - 3*spider->distanceBetweenLegs,
+		spider->posY  );
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) - 3*spider->distanceBetweenLegs,
+		spider->posY   - 40 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) - 3*spider->distanceBetweenLegs,
+		spider->posY   - 40 * cos(0.349066));
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 40 * sin(0.349066) + 120 * sin(5.23599) - 3*spider->distanceBetweenLegs ,
+		spider->posY  - 40 * cos(0.349066) - 120 * cos(5.23599));
+
+
+	glEnd();
+
+	/*glBegin(GL_LINES);
+	    glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60,
+			spider->posY  + 60);
+			glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius  + 60 +  50 * sin(5.75959),
+		 spider->posY  + 60 + 50 * cos(5.75959));
+
+	glEnd();*/
+
+
+	/*glBegin(GL_TRIANGLE_FAN);
+	for (int i = 0; i < num_segments; i++) {
+		float theta = 2.0f * PI * i / num_segments;
+		glVertex2f(spider->posX + spider->abdomenRadius + spider->headRadius + spider->headRadius * cos(theta),
+			spider->posY + spider->headRadius * sin(theta));
+	}
+	glEnd();*/
 }
 
 bool same_direction(GLfloat threshold, GLfloat xa, GLfloat ya, GLfloat xb, GLfloat yb) {

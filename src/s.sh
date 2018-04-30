@@ -1,5 +1,6 @@
 #!/bin/sh
 
+rm $1.o $2.o $1
 echo "file1 $1.cpp file2 $2.cpp"
 g++ -c $2.cpp -lglut -lGLU -lGL -lm
 echo "$2.o generated"
